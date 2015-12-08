@@ -1,0 +1,22 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+<div layout="row" layout-align="center center">
+   <p class="md-title">{{main.title}}</p>
+</div>
+<div layout="row" layout-align="center center">
+    <md-input-container flex="30">
+      <label>Add items</label>
+      <input ng-model="main.item" ng-change="checkDuplicate(main.item)">
+    </md-input-container>
+    <md-button  class="md-raised"  ng-click="main.addToList(main.item)">Add</md-button>
+</div>
+<div layout="row" layout-align="center center">
+  <ul class="list-group" style="list-style-type: none">
+    <li class="list-group-item" ng-repeat="item in main.itemContainer track by $index">
+      <span ng-if="$index != main.editRemoveIndex">{{item}} - <a href="#" ng-click="main.edit($index, item)">Edit</a>/<a href="" ng-click="main.remove($index)">Remove</a></span>
+      <input  ng-model="main.originalItem"   ng-if="$index == main.editRemoveIndex">
+      <md-button class="md-primary" ng-click="main.save($index,main.originalItem)" ng-if="$index == main.editRemoveIndex">Ok</md-button>
+    </li>
+  </ul>
+</div>
+
+
