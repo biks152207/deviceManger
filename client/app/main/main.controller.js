@@ -3,17 +3,20 @@
 
     /* Constructor function for controller */
 
-    var Controller = function($mdToast, $scope, Message) {
+    var Controller = function($mdToast, $scope, Message, httpService) {
         var main = this;
         this.toast = $mdToast;
         main.itemContainer = [];
         main.editRemoveIndex = null;
-        main.title = 'Angularjs Demo :)';
+        main.title = 'Angularjs Device Manger :)';
+        main.getData = getData.bind(main);
+        /* Initailzation */
+        main.getData();
 
         /* Check duplicate item from the list before we add */
         main.duplicateCheck = function(currentItem){
             var arr = _.filter(main.itemContainer, function(item) {
-                return item.toLowerCase() == currentItem.toLowerCase();
+                return item.title.toLowerCase() == currentItem.toLowerCase();
             });
             if (arr.length != 0) {
                 $mdToast.show({
@@ -24,6 +27,17 @@
                 return false;
             }
             return true;
+        }
+
+        /* Get data from httpService */
+
+        function getData(){
+          httpService.fetchData()
+            .then(function(result){
+              console.log(result.data);
+              main.itemContainer = result.data;
+              // console.log(main.con)
+            })
         }
 
         $scope.$watch('main.item', function(newValue, oldValue) {
@@ -56,11 +70,12 @@
                     this.showToast(Message.unique)
                     return;
                 }
-                main.itemContainer.push(item);
+                main.itemContainer.push({title: item});
 
             } else {
 
                 this.showToast(Message.require);
+                main.title = null;
             }
         }
 
@@ -77,7 +92,7 @@
 
     Controller.prototype.checkDuplicate = function(currentItem) {
         var arr = _.filter(this.itemContainer, function(item) {
-            return item.toLowerCase() == currentItem.toLowerCase();
+            return item.title.toLowerCase() == currentItem.toLowerCase();
         });
         return arr;
     }
@@ -93,6 +108,7 @@
             '$mdToast',
             '$scope',
             'Message',
+            'httpService',
             Controller
         ])
         .controller('ToastCtrl', [
